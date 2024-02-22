@@ -6,13 +6,13 @@ const initialGameBoard = [
 	[null, null, null],
 ];
 
-export default function GameBoard({ onSquareClick }) {
+export default function GameBoard({ onSquareClick, playerSymbol }) {
 	const [gameBoard, setGameBoard] = useState(initialGameBoard);
 
 	function handleSquarelick(rowIndex, colIndex) {
 		setGameBoard((prevGameBoard) => {
 			const newGameBoard = [...prevGameBoard.map((row) => [...row])];
-			newGameBoard[rowIndex][colIndex] = 'X';
+			newGameBoard[rowIndex][colIndex] = playerSymbol;
 			return newGameBoard;
 		});
 
