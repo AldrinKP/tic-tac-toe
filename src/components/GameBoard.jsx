@@ -1,23 +1,27 @@
-import { useState } from 'react';
-
 const initialGameBoard = [
 	[null, null, null],
 	[null, null, null],
 	[null, null, null],
 ];
 
-export default function GameBoard({ onSquareClick, playerSymbol }) {
-	const [gameBoard, setGameBoard] = useState(initialGameBoard);
+export default function GameBoard({ onSquareClick, turns }) {
+	let gameBoard = initialGameBoard;
 
-	function handleSquarelick(rowIndex, colIndex) {
-		setGameBoard((prevGameBoard) => {
-			const newGameBoard = [...prevGameBoard.map((row) => [...row])];
-			newGameBoard[rowIndex][colIndex] = playerSymbol;
-			return newGameBoard;
-		});
-
-		onSquareClick();
+	for (const turn of turns) {
+		const { row, col } = turn.square;
+		gameBoard[row][col] = turn.player;
 	}
+	// const [gameBoard, setGameBoard] = useState(initialGameBoard);
+
+	// function handleSquarelick(rowIndex, colIndex) {
+	// 	setGameBoard((prevGameBoard) => {
+	// 		const newGameBoard = [...prevGameBoard.map((row) => [...row])];
+	// 		newGameBoard[rowIndex][colIndex] = playerSymbol;
+	// 		return newGameBoard;
+	// 	});
+
+	// 	onSquareClick();
+	// }
 
 	return (
 		<ol id="game-board">
@@ -28,7 +32,7 @@ export default function GameBoard({ onSquareClick, playerSymbol }) {
 							<li key={colIndex}>
 								<button
 									onClick={() =>
-										handleSquarelick(rowIndex, colIndex)
+										onSquareClick(rowIndex, colIndex)
 									}
 								>
 									{playerSymbol}

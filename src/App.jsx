@@ -1,14 +1,33 @@
 import { useState } from 'react';
 import Player from './components/Player';
 import GameBoard from './components/GameBoard';
+import Log from './components/Log';
 
 function App() {
+	const [gameTurns, setGameTurns] = useState([]);
 	const [activePlayer, setActivePlayer] = useState('X');
 
-	function handleSquareClick() {
+	function handleSquareClick(rowIndex, colIndex) {
 		setActivePlayer((prevActivePlayer) =>
 			prevActivePlayer === 'X' ? 'O' : 'X'
 		);
+
+		// Avoid accessing a different state variable in a state updater function. Try to compute it instead
+		// In this example we avoid adccessing activePlayer and compute it instead
+		setGameTurns((prevGameTurns) => {
+			let currentPlayer = 'X';
+			if (prevGameTurns.length > 0 && prevGameTurns[0].player === 'X') {
+				currentPlayer = 'O';
+			}
+
+			return [
+				{
+					square: { row: rowIndex, col: colIndex },
+					player: currentPlayer,
+				},
+				...prevGameTurns,
+			];
+		});
 	}
 
 	return (
@@ -28,10 +47,10 @@ function App() {
 				</ol>
 				<GameBoard
 					onSquareClick={handleSquareClick}
-					playerSymbol={activePlayer}
+					turns={gameTurns}
 				/>
 			</div>
-			LOG
+			<Log turns={gameTurns} />
 		</main>
 	);
 }
