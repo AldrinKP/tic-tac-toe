@@ -1,18 +1,4 @@
-const initialGameBoard = [
-	[null, null, null],
-	[null, null, null],
-	[null, null, null],
-];
-
-export default function GameBoard({ onSquareClick, turns }) {
-	let gameBoard = initialGameBoard;
-
-	// gameBoard is updated in a mutable way because we are not using the state setter function
-	for (const turn of turns) {
-		const { row, col } = turn.square;
-		gameBoard[row][col] = turn.player;
-	}
-
+export default function GameBoard({ onSquareClick, gameBoard }) {
 	return (
 		<ol id="game-board">
 			{gameBoard.map((row, rowIndex) => (
