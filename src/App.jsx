@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Player from './components/Player';
 import GameBoard from './components/GameBoard';
 import Log from './components/Log';
+import GameOver from './components/GameOver';
 import { WINNING_COMBINATIONS } from './winning-combinations';
 
 const initialGameBoard = [
@@ -20,12 +21,16 @@ function deriveActivePlayer(gameTurns) {
 }
 
 function App() {
+	const [players, setPlayers] = useState({
+		X: 'Player 1',
+		O: 'Player 2',
+	});
 	const [gameTurns, setGameTurns] = useState([]);
 	const currentPlayer = deriveActivePlayer(gameTurns);
 
-	let gameBoard = initialGameBoard;
+	// gameBoard is a copy of the initialGameBoard so we can keep initalGameBoard immutable
+	let gameBoard = [...initialGameBoard.map((row) => [...row])];
 
-	// gameBoard is updated in a mutable way because we are not using the state setter function
 	for (const turn of gameTurns) {
 		const { row, col } = turn.square;
 		gameBoard[row][col] = turn.player;
@@ -45,11 +50,11 @@ function App() {
 			firstSquareSymbol === secondSquareSymbol &&
 			firstSquareSymbol === thirdSquareSymbol
 		) {
-			winner = firstSquareSymbol;
+			winner = players[firstSquareSymbol];
 		}
 	}
 
-	console.log(gameTurns);
+	const hasDraw = gameTurns.length === 9 && !winner;
 
 	function handleSquareClick(rowIndex, colIndex) {
 		setGameTurns((prevGameTurns) => {
@@ -65,6 +70,19 @@ function App() {
 		});
 	}
 
+	function handleRematchClick() {
+		setGameTurns([]);
+	}
+
+	function handlePlayerNameChange(symbol, newName) {
+		setPlayers((prevPlayers) => {
+			return {
+				...prevPlayers,
+				[symbol]: newName,
+			};
+		});
+	}
+
 	return (
 		<main>
 			<div id="game-container">
@@ -73,14 +91,18 @@ function App() {
 						initialName="Player 1"
 						symbol="X"
 						isActive={currentPlayer === 'X'}
+						onChangeName={handlePlayerNameChange}
 					/>
 					<Player
 						initialName="Player 2"
 						symbol="O"
 						isActive={currentPlayer === 'O'}
+						onChangeName={handlePlayerNameChange}
 					/>
 				</ol>
-				{winner && <p>You won, {winner}!</p>}
+				{(winner || hasDraw) && (
+					<GameOver winner={winner} rematch={handleRematchClick} />
+				)}
 				<GameBoard
 					onSquareClick={handleSquareClick}
 					gameBoard={gameBoard}
