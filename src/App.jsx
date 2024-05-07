@@ -3,22 +3,22 @@ import Player from './components/Player';
 import GameBoard from './components/GameBoard';
 import Log from './components/Log';
 
+function deriveActivePlayer(gameTurns) {
+	let currentPlayer = 'X';
+
+	if (gameTurns.length > 0 && gameTurns[0].player === 'X') {
+		currentPlayer = 'O';
+	}
+	return currentPlayer;
+}
+
 function App() {
 	const [gameTurns, setGameTurns] = useState([]);
-	const [activePlayer, setActivePlayer] = useState('X');
+	const currentPlayer = deriveActivePlayer(gameTurns);
 
 	function handleSquareClick(rowIndex, colIndex) {
-		setActivePlayer((prevActivePlayer) =>
-			prevActivePlayer === 'X' ? 'O' : 'X'
-		);
-
-		// Avoid accessing a different state variable in a state updater function. Try to compute it instead
-		// In this example we avoid adccessing activePlayer and compute it instead
 		setGameTurns((prevGameTurns) => {
-			let currentPlayer = 'X';
-			if (prevGameTurns.length > 0 && prevGameTurns[0].player === 'X') {
-				currentPlayer = 'O';
-			}
+			const currentPlayer = deriveActivePlayer(prevGameTurns);
 
 			return [
 				{
@@ -37,12 +37,12 @@ function App() {
 					<Player
 						initialName="Player 1"
 						symbol="X"
-						isActive={activePlayer === 'X'}
+						isActive={currentPlayer === 'X'}
 					/>
 					<Player
 						initialName="Player 2"
 						symbol="O"
-						isActive={activePlayer === 'O'}
+						isActive={currentPlayer === 'O'}
 					/>
 				</ol>
 				<GameBoard
